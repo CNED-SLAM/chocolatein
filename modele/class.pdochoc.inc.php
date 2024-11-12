@@ -186,5 +186,19 @@ class PdoChoc {
         $requetePrepare->bindParam(':unMail', $mail, PDO::PARAM_STR);
         return $requetePrepare->execute();
     }
+    
+    public function getListeProduits($recherche) {
+        // Ajout de caractères jokers à notre recherche
+        $recherche = "%".$recherche."%";
+        $requetePrepare = PdoChoc::$monPdo->prepare(
+                'SELECT DISTINCT produit.* FROM details_produits JOIN produit ON (id=idproduit) '
+                . 'WHERE details LIKE :uneRecherche '
+                . 'OR nom LIKE :uneRecherche '
+                . 'OR description LIKE :uneRecherche'
+        );
+        $requetePrepare->bindParam(':uneRecherche', $recherche, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->fetchAll();
+    }
 
 }
